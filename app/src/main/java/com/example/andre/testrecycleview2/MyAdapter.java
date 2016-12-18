@@ -33,13 +33,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             txtHeader = (TextView) itemView.findViewById(R.id.firstLine);
             txtFooter = (TextView) itemView.findViewById(R.id.secondLine);
 
-            //TODO: Hier weitere Rückmeldungen einbauen
+            //TODO: Hier weitere Rückmeldungen einbauen -> Oder besser in onBindViewHolder ???
+            //TODO: Verträgt sich das mit setOnClickListener in onBindViewHolder ?????????
+            //VERMUTUNG: Löschen in onBindViewHolder ist besser -> Nur so ein Gefühl...
+            /*
             itemView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "Element " + getAdapterPosition() + " clicked.")
+                    Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
                 }
             });
+            */
         }
     }
 
@@ -78,13 +82,31 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
 
     // SCHRITT #3: onBindViewHolder
+    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        // - get element from your dataset at this position
+        // - replace the contents of the view with that element
+        Log.d(TAG, "Element " + position + " set.");
 
+        final String name = mDataset.get(position);
+        holder.txtHeader.setText(mDataset.get(position));
+
+        //Beachte: Klick auf Header, nicht auf ganzes Element
+        holder.txtHeader.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                remove(name);
+            }
+        });
+
+        holder.txtFooter.setText("Foooter: " + mDataset.get(position));
     }
 
+
+    // SCHRITT #4: Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return 0;
+        return mDataset.size();
     }
 }
