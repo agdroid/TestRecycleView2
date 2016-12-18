@@ -1,7 +1,7 @@
 package com.example.andre.testrecycleview2;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -13,8 +13,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private ArrayList<String>  myDataset = new ArrayList<String>(Arrays.asList("bla1","bla2",
-            "bla3","bla4","bla5","bla6","bla7","bla8"));
+    private ArrayList<String> myDataset = new ArrayList<String>(Arrays.asList("bla1", "bla2",
+            "bla3", "bla4", "bla5", "bla6", "bla7", "bla8",
+            "bla9", "bla10", "bla11", "bla12", "bla13", "bla14"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
