@@ -25,11 +25,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //FAB nur mit CoordinatorLayout und compile 'com.android.support:design:25.0.1'
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Dialogfenster einbauen", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
