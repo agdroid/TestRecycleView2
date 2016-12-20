@@ -1,17 +1,25 @@
 package com.example.andre.testrecycleview2;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String LOG_TAG = MainActivity.class.getSimpleName();
+
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -49,4 +57,62 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MyAdapter(myDataset);
         mRecyclerView.setAdapter(mAdapter);
     }
+
+
+    // Grund für "final" deklarierte Variablen
+    // Die innere Klasse onClick greift auch auf den übergebenen itemTitle aus der äußeren
+    // Methode zu. itemTitle ist ein String und wird wie ein Object in Java als Referenz übergeben,
+    //-> In der inneren Klasse könnte deshalb über die Referenz der Wert der aufrufenden Variablen
+    // verändert werden. Mit dem Pflicht-"final" verhindert Java diese Zugriffe.
+    private AlertDialog createItemDialog(final String title) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        //Inflator der Activity aufrufen
+        LayoutInflater inflater = getLayoutInflater();
+
+        View dialogsView = inflater.inflate(R.layout.dialog_edit_item, null);
+
+        //Achtung: Hier wieder "final", siehe oben
+        final EditText editTextTitle = (EditText) dialogsView.findViewById(R.id.editText_dialog_title);
+
+        //Bisheriger Wert wird in Dialogfeld eingetragen
+        editTextTitle.setText(title);
+
+        AlertDialog.Builder builder1 = builder.setView(dialogsView)
+                .setTitle(R.string.dialog_item_title)
+                .setPositiveButton(R.string.dialog_button_positive, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String titleString = editTextTitle.getText().toString();
+
+                        if (TextUtils.isEmpty(titleString)) {
+                            Log.d(LOG_TAG, "Ein Eintrag enthielt keinen Text. Deshalb Abbruch der Änderung.");
+                            return;
+                        }
+                        //Speichern der Änderung -> Zuerst möglichen alten Datensatz löschen
+                        if (title.isEmpty()) {   //neues Element
+                            myDataset.add(titleString);
+                            mAdapter.notifyDataSetChanged();
+                        } else {
+                            if(title.equals(titleString)) {  //Update
+                                //Bisher leer, da nur der Titel geändert werden kann
+                            } else {
+                                int pos = myDataset.indexOf(title);
+                                myDataset.add(pos, titleString);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        }
+                     }
+                })
+                .setNegativeButton(R.string.dialog_button_negative, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        return builder.create();
+    }
+
 }
