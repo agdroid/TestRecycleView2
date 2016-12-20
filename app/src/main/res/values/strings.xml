@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Test RecycleView 2</string>
+    <string name="app_name">Test RecyclerView 2</string>
+    <string name="dialog_item_title">Titel</string>
+
 </resources>
