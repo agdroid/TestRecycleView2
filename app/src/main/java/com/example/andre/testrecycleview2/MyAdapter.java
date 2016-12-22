@@ -24,26 +24,33 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     // you provide access to all the views for a data item in a view holder
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+
         // each data item is just a string in this case
         public TextView txtHeader;
         public TextView txtFooter;
 
         public ViewHolder(View itemView) {
             super(itemView);
+
+
             txtHeader = (TextView) itemView.findViewById(R.id.firstLine);
             txtFooter = (TextView) itemView.findViewById(R.id.secondLine);
 
             //TODO: Hier weitere Rückmeldungen einbauen -> Oder besser in onBindViewHolder ???
             //TODO: Verträgt sich das mit setOnClickListener in onBindViewHolder ?????????
-            //VERMUTUNG: Löschen in onBindViewHolder ist besser -> Nur so ein Gefühl...
-            /*
+            //TODO: Lösung: In onBindViewHolder läßt sich nur einzelnes Element mit "Klick"
+            //       auswerten, nicht aber die View als solche
+
             itemView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
+                    int position = getAdapterPosition();
+                    String name = mDataset.get(position);
+                    Log.d(TAG, "Element " + position + " clicked.");
+                    remove(name);
                 }
             });
-            */
+
         }
     }
 
@@ -91,16 +98,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         final String name = mDataset.get(position);
         holder.txtHeader.setText(mDataset.get(position));
+        holder.txtFooter.setText("Foooter: " + mDataset.get(position));
 
-        //Beachte: Klick auf Header, nicht auf ganzes Element
+        //Beachte: Klick auf txtHeader, nicht auf ganzes Element
+        /*
         holder.txtHeader.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 remove(name);
             }
         });
+        */
 
-        holder.txtFooter.setText("Foooter: " + mDataset.get(position));
     }
 
 
