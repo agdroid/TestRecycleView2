@@ -1,12 +1,16 @@
 package com.example.andre.testrecycleview2;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -16,6 +20,8 @@ import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private static final String TAG = "MyAdapter";
+
+    private Context mAppContext;  //Context aus MainActivity übernommen
     private ArrayList<String> mDataset;
 
     // SCHRITT #1: Erweitern des Standard-Klasse ViewHolder mit gewünschten Eigenschaften
@@ -29,6 +35,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public TextView txtHeader;
         public TextView txtFooter;
 
+
+
         public ViewHolder(View itemView) {
             super(itemView);
 
@@ -41,6 +49,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             //TODO: Lösung: In onBindViewHolder läßt sich nur einzelnes Element mit "Klick"
             //       auswerten, nicht aber die View als solche
 
+            //setOnClickListener kann rasu -> löschen wird jetzt in LongClick behandelt
+            /*
             itemView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -49,6 +59,33 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     Log.d(TAG, "Element " + position + " clicked.");
                     remove(name);
                 }
+            });
+            */
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    //Inflate CAB mit Edit und Delete
+
+ //TODO:                   Problem: Menü muss bereits in der MainActivity gesetzt wein und wird hier nur ergänzt!
+                    Menu menu = (Menu) new MenuInflater(mAppContext);
+
+
+
+                    //Feld einfärben
+                    CharSequence text = "Das ist der Longclick!";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(mAppContext, text, duration);
+                    toast.show();
+
+
+
+                    return false;
+                }
+
+
+
             });
 
         }
@@ -69,8 +106,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(ArrayList<String> myDataset) {
+    public MyAdapter(Context context, ArrayList<String> myDataset) {
         mDataset = myDataset;
+        mAppContext = context;
     }
 
 
