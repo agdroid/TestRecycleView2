@@ -14,8 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Später Context an MyAdapter als Parameter übergeben
         // -> Damit MyAdapter weis an welchen Context die ActionBar gesetzt werden muss
-        appContext = getApplicationContext();
+        //appContext = getApplicationContext();
 
         //Menu initialisieren
 
@@ -67,8 +69,34 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         //specify an adapter (see also next example)
-        mAdapter = new MyAdapter(appContext, myDataset);
+        mAdapter = new MyAdapter(this, myDataset);
         mRecyclerView.setAdapter(mAdapter);
+
+        final Menu m = (Menu) getActionBar();
+
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+
+
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+                CharSequence text = "Das ist der Longclick!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(getApplication(), text, duration);
+                toast.show();
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
     }
 
 

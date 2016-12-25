@@ -4,13 +4,9 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -21,8 +17,10 @@ import java.util.ArrayList;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private static final String TAG = "MyAdapter";
 
-    private Context mAppContext;  //Context aus MainActivity übernommen
+    //private Context mAppContext;  //Context aus MainActivity übernommen
     private ArrayList<String> mDataset;
+    private LayoutInflater mInflator;  //siehe wiseAss
+
 
     // SCHRITT #1: Erweitern des Standard-Klasse ViewHolder mit gewünschten Eigenschaften
     // Provide a reference to the views for each data item
@@ -32,17 +30,22 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
 
         // each data item is just a string in this case
-        public TextView txtHeader;
-        public TextView txtFooter;
+        private TextView txtHeader;
+        private TextView txtFooter;
+        private View container;  //Ist die View für click-events -> siehe wiseAss
 
 
-
+        //constructor
         public ViewHolder(View itemView) {
             super(itemView);
 
 
             txtHeader = (TextView) itemView.findViewById(R.id.firstLine);
             txtFooter = (TextView) itemView.findViewById(R.id.secondLine);
+            //cast mit (View) wäre redundant, d.h. mehrfach genannt, weil Ergebnis schon eine View
+            // ist und nicht z.Bsp. eine spezielle TextView
+            container = itemView.findViewById(R.id.container_item_root);
+
 
             //TODO: Hier weitere Rückmeldungen einbauen -> Oder besser in onBindViewHolder ???
             //TODO: Verträgt sich das mit setOnClickListener in onBindViewHolder ?????????
@@ -62,14 +65,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             });
             */
 
+
+//TODO: Gehört wohl ins Hauptmenü -> Dann wäre auch mAppContext nicht mehr erforderlich
+/*
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
+
+
+
                 @Override
                 public boolean onLongClick(View v) {
 
                     //Inflate CAB mit Edit und Delete
 
  //TODO:                   Problem: Menü muss bereits in der MainActivity gesetzt wein und wird hier nur ergänzt!
-                    Menu menu = (Menu) new MenuInflater(mAppContext);
+
 
 
 
@@ -87,14 +96,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
 
             });
-
+*/
         }
     }
 
     //AG: Einfügen neuer Element
     public void add(int position, String item) {
         mDataset.add(position, item);
-        notifyItemChanged(position);
+        notifyItemInserted(position);
     }
 
     //AG: Löschen eines Elements
@@ -108,7 +117,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     // Provide a suitable constructor (depends on the kind of dataset)
     public MyAdapter(Context context, ArrayList<String> myDataset) {
         mDataset = myDataset;
-        mAppContext = context;
+        mInflator = LayoutInflater.from(context);
+        //mAppContext = context;
     }
 
 
