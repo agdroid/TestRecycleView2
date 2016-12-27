@@ -13,6 +13,7 @@ import java.util.List;
  * Created by Ryan on 01/03/2016.
  */
 public class DummyData {
+
     private static final String[] titles = {
             "blabla",
             "blabla",

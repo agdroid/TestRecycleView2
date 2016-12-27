@@ -19,13 +19,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.andre.testrecycleview2.model.DummyData;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    Context appContext;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -38,13 +39,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //Später Context an MyAdapter als Parameter übergeben
-        // -> Damit MyAdapter weis an welchen Context die ActionBar gesetzt werden muss
-        //appContext = getApplicationContext();
-
-        //Menu initialisieren
-
 
         //FAB nur mit CoordinatorLayout und compile 'com.android.support:design:25.0.1'
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -69,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         //specify an adapter (see also next example)
-        mAdapter = new MyAdapter(this, myDataset);
+        mAdapter = new MyAdapter(this, DummyData.getListData());
         mRecyclerView.setAdapter(mAdapter);
 
         final Menu m = (Menu) getActionBar();
 
-
+/*
         mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 
 
@@ -97,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+*/
     }
 
 
