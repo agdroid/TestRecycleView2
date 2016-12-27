@@ -4,6 +4,8 @@ package com.example.andre.testrecycleview2.model;
  * Created by andre on 25.12.2016.
  */
 
+import com.example.andre.testrecycleview2.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +25,10 @@ public class DummyData {
             android.R.drawable.ic_menu_add,
             android.R.drawable.ic_menu_delete};
 
-    public static List<ListItem> getListData() {
-        List<ListItem> data = new ArrayList<>();
+    private static final int icon = R.drawable.ic_tonality_black_36dp;
+
+    public static ArrayList<ListItem> getListData() {
+        ArrayList<ListItem> data = new ArrayList<>();
         int nr = 0;
 
         //Repeat process 4 times, so that we have enough data to demonstrate a scrollable
@@ -35,6 +39,7 @@ public class DummyData {
                 ListItem item = new ListItem();
                 item.setImageResId(icons[i]);
                 item.setTitle(titles[i] + " " + nr);
+                item.setSubTitle("Subtitle: " + titles[i] + " " + nr);
                 data.add(item);
                 nr++;
             }

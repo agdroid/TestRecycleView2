@@ -7,7 +7,25 @@ package com.example.andre.testrecycleview2.model;
 
 public class ListItem {
     private String title;
+    private String subTitle;
     private int imageResId;
+    private boolean favourite = false;
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
 
     public String getTitle() {
         return title;
