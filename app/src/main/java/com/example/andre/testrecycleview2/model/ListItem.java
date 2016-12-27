@@ -1,6 +1,7 @@
 package com.example.andre.testrecycleview2.model;
 
 /**
+ * Java Repräsentation of our data to be displayed in the RecyclerView
  * Created by andre on 25.12.2016.
  */
 

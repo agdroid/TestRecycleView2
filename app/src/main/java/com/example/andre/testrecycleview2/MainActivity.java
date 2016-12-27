@@ -20,25 +20,28 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.andre.testrecycleview2.model.DummyData;
+import com.example.andre.testrecycleview2.model.ListItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    private List<ListItem> myDataset;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private ArrayList<String> myDataset = new ArrayList<String>(Arrays.asList("bla1", "bla2",
-            "bla3", "bla4", "bla5", "bla6", "bla7", "bla8",
-            "bla9", "bla10", "bla11", "bla12", "bla13", "bla14"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myDataset = DummyData.getListData();
 
         //FAB nur mit CoordinatorLayout und compile 'com.android.support:design:25.0.1'
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -47,7 +50,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Snackbar.make(view, "Dialogfenster einbauen", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
-                AlertDialog editItemDialog = createItemDialog("");
+                ListItem item = new ListItem();
+                item.setTitle("");
+                item.setImageResId(android.R.drawable.ic_input_add);
+                AlertDialog editItemDialog = createItemDialog(item);
                 editItemDialog.show();
             }
         });
@@ -63,35 +69,11 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         //specify an adapter (see also next example)
-        mAdapter = new MyAdapter(this, DummyData.getListData());
+        mAdapter = new MyAdapter(this, myDataset);
         mRecyclerView.setAdapter(mAdapter);
 
         final Menu m = (Menu) getActionBar();
 
-/*
-        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-
-
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-                CharSequence text = "Das ist der Longclick!";
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(getApplication(), text, duration);
-                toast.show();
-
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-            }
-        });
-*/
     }
 
 
@@ -100,8 +82,9 @@ public class MainActivity extends AppCompatActivity {
     // Methode zu. itemTitle ist ein String und wird wie ein Object in Java als Referenz übergeben,
     //-> In der inneren Klasse könnte deshalb über die Referenz der Wert der aufrufenden Variablen
     // verändert werden. Mit dem Pflicht-"final" verhindert Java diese Zugriffe.
-    private AlertDialog createItemDialog(final String title) {
 
+    private AlertDialog createItemDialog(final ListItem item) {
+        final String title = item.getTitle();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         //Inflator der Activity aufrufen
@@ -126,16 +109,24 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(LOG_TAG, "Ein Eintrag enthielt keinen Text. Deshalb Abbruch der Änderung.");
                             return;
                         }
+
+                        ListItem itemNeu = new ListItem();
+                        itemNeu.setImageResId(item.getImageResId());
+                        itemNeu.setTitle("");
+
                         //Speichern der Änderung -> Zuerst möglichen alten Datensatz löschen
                         if (title.isEmpty()) {   //neues Element
-                            myDataset.add(titleString);
+                            itemNeu.setTitle(titleString);
+                            myDataset.add(itemNeu);
                             mAdapter.notifyDataSetChanged();
                         } else {
                             if(title.equals(titleString)) {  //Update
                                 //Bisher leer, da nur der Titel geändert werden kann
                             } else {
-                                int pos = myDataset.indexOf(title);
-                                myDataset.add(pos, titleString);
+                                itemNeu.setTitle(titleString);
+                                itemNeu.setImageResId(item.getImageResId());
+                                int pos = myDataset.indexOf(item);
+                                myDataset.add(pos, itemNeu);
                                 mAdapter.notifyDataSetChanged();
                             }
                         }
@@ -150,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
         return builder.create();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

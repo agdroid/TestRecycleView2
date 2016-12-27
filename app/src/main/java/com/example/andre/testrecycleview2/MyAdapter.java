@@ -45,7 +45,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
             title = (TextView) itemView.findViewById(R.id.tv_title);
             txtFooter = (TextView) itemView.findViewById(R.id.secondLine);
-            container = itemView.findViewById(R.id.container_item_root);
+            icon = (ImageView) itemView.findViewById(R.id.im_item_icon);
+            container = itemView.findViewById(R.id.container_item_root2);
 
         }
     }
