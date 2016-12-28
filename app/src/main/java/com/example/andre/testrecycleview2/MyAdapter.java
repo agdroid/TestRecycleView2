@@ -89,7 +89,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         this.mListData.addAll(exerciseList);
     }
 */
-
+/*
     //AG: Einfügen neuer Element
     public void add(int position, ListItem item) {
         mListData.add(position, item);
@@ -102,7 +102,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         mListData.remove(position);
         notifyItemRemoved(position);
     }
-
+*/
 
     // Provide a suitable constructor (depends on the kind of dataset)
     // Context der aufrufenden Activity wird mit übergeben.

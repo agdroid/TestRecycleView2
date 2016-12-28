@@ -1,5 +1,6 @@
 package com.example.andre.testrecycleview2;
 
+import android.app.LauncherActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,8 +70,12 @@ public class MainActivity extends AppCompatActivity implements MyAdapter.ItemCli
         //Interface aus MyAdapter
         //TODO: Warum steht hier "this"
         //TODO: -> MyAdapter: public void setItemClickCallback(final ItemClickCallback itemClickCallback)
-        //      -> Offensichtlich wrden dann die in dieser Activity implementierten Klick-Methoden aufgerufen
+        //      -> Offensichtlich werden dann die in dieser Activity implementierten Klick-Methoden aufgerufen
         mAdapter.setItemClickCallback(this);
+
+        //Helper Klasse organisiert swipe, delete usw. in der RecyclerView
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(createHelperCallback());
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         //FAB nur mit CoordinatorLayout und compile 'com.android.support:design:25.0.1'
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -78,15 +84,63 @@ public class MainActivity extends AppCompatActivity implements MyAdapter.ItemCli
             public void onClick(View view) {
                 //Snackbar.make(view, "Dialogfenster einbauen", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
+                /* Zum Rest Random Variante von wiseAss
                 ListItem item = new ListItem();
                 item.setTitle("");
                 item.setImageResId(android.R.drawable.ic_input_add);
                 AlertDialog editItemDialog = createItemDialog(item);
                 editItemDialog.show();
+                */
+
+                addItemToList();
             }
         });
+    }
 
 
+    private ItemTouchHelper.Callback createHelperCallback() {
+
+        //So sieht die Definition aus: ItemTouchHelper.SimpleCallback(int dragDirs, int swipeDirs)
+        //Man kann auch eine Richtung weglassen... -> Dort muss ist die Zahl "0" einzusetzen
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
+                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                          RecyclerView.ViewHolder target) {
+                        moveItem(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                        return true;
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                        deleteItem(viewHolder.getAdapterPosition());
+                    }
+                };
+        return simpleItemTouchCallback;
+    }
+
+    private void addItemToList() {
+        ListItem item = DummyData.getRandomListItem();
+        myDataset.add(item);
+        mAdapter.notifyItemInserted(myDataset.indexOf(item));
+    }
+
+    private void moveItem(int oldPos, int newPos) {
+        //Wie funktioniert's:
+        // 1. item ist nur Referenz auf Element in der Liste
+        // 2. remove verbiegt nur den Zeiger um das gelöschte Element herum -> item zeigt weiter darauf
+        // 3. item wird an die neue Stelle der Liste eingefügt
+        ListItem item = (ListItem) myDataset.get(oldPos);
+        myDataset.remove(oldPos);
+        myDataset.add(newPos, item);
+        mAdapter.notifyItemMoved(oldPos, newPos);
+    }
+
+    private void deleteItem(int pos) {
+        myDataset.remove(pos);
+        mAdapter.notifyItemRemoved(pos);
     }
 
 
@@ -115,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements MyAdapter.ItemCli
             item.setFavourite(true);
         }
         //pass new data to adapter and update
-        //ggü wiseAss nicht notwendig, das Object direkt geändert wird   mAdapter.setMyDataset(myDataset);
+        // mAdapter.setMyDataset(myDataset); //ggü wiseAss nicht notwendig, das Object direkt geändert wird
         mAdapter.notifyDataSetChanged();
 
     }
@@ -163,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements MyAdapter.ItemCli
                             myDataset.add(itemNeu);
                             mAdapter.notifyDataSetChanged();
                         } else {
-                            if(title.equals(titleString)) {  //Update
+                            if (title.equals(titleString)) {  //Update
                                 //Bisher leer, da nur der Titel geändert werden kann
                             } else {
                                 itemNeu.setTitle(titleString);
@@ -173,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements MyAdapter.ItemCli
                                 mAdapter.notifyDataSetChanged();
                             }
                         }
-                     }
+                    }
                 })
                 .setNegativeButton(R.string.dialog_button_negative, new DialogInterface.OnClickListener() {
                     @Override

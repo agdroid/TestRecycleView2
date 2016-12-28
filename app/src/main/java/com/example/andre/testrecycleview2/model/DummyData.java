@@ -8,6 +8,7 @@ import com.example.andre.testrecycleview2.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * This class is a dummy data source, used to simulate the kind of input you might recieve from a
@@ -17,6 +18,7 @@ import java.util.List;
 public class DummyData {
 
     private static final String[] titles = {
+            "blabla",
             "blabla",
             "blabla",
             "blabla"};
@@ -45,5 +47,17 @@ public class DummyData {
             }
         }
         return data;
+    }
+
+    public static ListItem getRandomListItem() {
+        int rand = new Random().nextInt(3);
+        int rand2 = new Random().nextInt(1000);
+
+        ListItem item = new ListItem();
+
+        item.setTitle(titles[rand] + " " + rand2);
+        item.setSubTitle("Subtitle: " + titles[rand] + " " + rand2);
+
+        return item;
     }
 }
