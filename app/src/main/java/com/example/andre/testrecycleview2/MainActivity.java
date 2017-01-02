@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.andre.testrecycleview2.model.DummyData;
 import com.example.andre.testrecycleview2.model.ListItem;
@@ -102,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements MyAdapter.ItemCli
 
         //So sieht die Definition aus: ItemTouchHelper.SimpleCallback(int dragDirs, int swipeDirs)
         //Man kann auch eine Richtung weglassen... -> Dort muss ist die Zahl "0" einzusetzen
+        //- ItemTouchHelper.SimpleCallback ist eine einfache "Schale" für die vorgegebene Funktion
+        // ItemTouchHelper.Callback. Die wird nur noch erweitert, zBsp. um onMove, onSwipe...
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
                 new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -114,8 +117,51 @@ public class MainActivity extends AppCompatActivity implements MyAdapter.ItemCli
                     }
 
                     @Override
-                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                        deleteItem(viewHolder.getAdapterPosition());
+                    public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+
+                        final View undo = viewHolder.itemView.findViewById(R.id.undo);
+
+                        if (undo != null) {
+                            TextView text = (TextView) viewHolder.itemView.findViewById(R.id.undo_text);
+                            text.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //callbacks.onDismiss(..) //delete-Funktion
+                                    deleteItem(viewHolder.getAdapterPosition());
+                                    mRecyclerView.getAdapter().notifyItemRemoved(viewHolder.getAdapterPosition());
+                                }
+                            });
+
+                            TextView button = (TextView) viewHolder.itemView.findViewById(R.id.undo_button);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //Neuzeichnen sollte alten Zustand wiederherstellen
+                                    mRecyclerView.getAdapter().notifyItemChanged(viewHolder.getAdapterPosition());
+                                    clearView(mRecyclerView, viewHolder);
+                                    undo.setVisibility(View.GONE);
+                                }
+                            });
+
+                            undo.setVisibility(View.VISIBLE); //View.VISIBLE
+                            //undo.bringToFront();
+                            undo.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //Wenn View undo nach UNDO_DELAY Millisekunden immer noch da
+                                    // ist wird automatisch gelöscht, sonst geschieht nichts!!!
+                                    if (undo.isShown()) {
+                                        //callbacks.onDismiss(..) //delete-Funktion
+                                        deleteItem(viewHolder.getAdapterPosition());
+                                        mRecyclerView.getAdapter().notifyItemRemoved(viewHolder.getAdapterPosition());
+                                    }
+                                }
+                            }, 1000);  //UNDO_DELAY=3000 Millisekunden
+
+                        }
+
+                        //mAdapter.onItemRemove(mRecyclerView, viewHolder);  //Test mit Snakebar
+                        //deleteItem(viewHolder.getAdapterPosition());
                     }
                 };
         return simpleItemTouchCallback;

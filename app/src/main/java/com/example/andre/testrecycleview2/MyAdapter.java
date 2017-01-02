@@ -1,19 +1,17 @@
 package com.example.andre.testrecycleview2;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.andre.testrecycleview2.model.DummyData;
 import com.example.andre.testrecycleview2.model.ListItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by andre on 18.12.2016.
@@ -23,7 +21,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private static final String TAG = "MyAdapter";
 
     private ArrayList<ListItem> mListData;
-    private LayoutInflater mInflator;  //siehe wiseAss
+    private LayoutInflater mInflater;  //siehe wiseAss
 
     //Einbau Interface für Callback-Methoder der Klicks auf das
     // a) ganze WElement oder b) das secondaryItem
@@ -108,16 +106,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     // Context der aufrufenden Activity wird mit übergeben.
     public MyAdapter(Context context, ArrayList<ListItem> dataset) {
         mListData = dataset;
-        mInflator = LayoutInflater.from(context);
+        mInflater = LayoutInflater.from(context);
     }
 
 
     // SCHRITT #2: onCreateViewHolder -> Eigenen MyViewHolder erstellen
     // Create new views (invoked by the layout manager)
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view -> Mit dem inflator der übergeordneten ViewGroup
-        View v = mInflator.inflate(R.layout.row_layout2, parent, false);
+        View v = mInflater.inflate(R.layout.row_layout2, parent, false);
 
         // set the view's size, margins, paddings and layout parameters
         MyViewHolder vh = new MyViewHolder(v);
@@ -144,5 +142,29 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @Override
     public int getItemCount() {
         return mListData.size();
+    }
+
+
+    //Testweise Snakebar wie https://gist.github.com/jirivrany/f1f177b7bbc187e8f980
+    public  void onItemRemove(final RecyclerView recyclerView, final RecyclerView.ViewHolder viewHolder) {
+        final int adapterPosition = viewHolder.getAdapterPosition();
+        final ListItem item = mListData.get(adapterPosition);
+
+        Snackbar snackbar = Snackbar
+                .make(recyclerView, "Remove", 3000)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int pos = viewHolder.getAdapterPosition();
+                        mListData.add(pos, item);
+                        notifyItemInserted(pos);
+                        recyclerView.scrollToPosition(pos);
+
+                    }
+                });
+        snackbar.show();
+        mListData.remove(adapterPosition);
+        notifyItemRemoved(adapterPosition);
+
     }
 }
