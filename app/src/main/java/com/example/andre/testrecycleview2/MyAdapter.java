@@ -59,9 +59,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             thumbnail = (ImageView) itemView.findViewById(R.id.im_item_icon);
             //Die nächsten beiden Elemente erhalten einen onClickListener..
             // -> MyViewHolder wurde deshalb mit "..implements View.OnClickListener" erweitert
+            //secondaryItem ist "Sternchen für Favorit"
             secondaryIcon = (ImageView) itemView.findViewById(R.id.im_item_icon_secondary);
             secondaryIcon.setOnClickListener(this);
 
+            //Gesamte View eines Elements
             container = itemView.findViewById(R.id.container_item_root2);
             container.setOnClickListener(this);
         }

@@ -49,6 +49,7 @@ public class DummyData {
         return data;
     }
 
+
     public static ListItem getRandomListItem() {
         int rand = new Random().nextInt(3);
         int rand2 = new Random().nextInt(1000);
@@ -60,4 +61,5 @@ public class DummyData {
 
         return item;
     }
+
 }
